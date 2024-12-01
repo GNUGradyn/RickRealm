@@ -1,37 +1,35 @@
 import React, { ReactNode, useState } from 'react';
 import './App.css';
 import { FixedSizeGrid as Grid } from "react-window";
-import AutoSizer from "react-virtualized-auto-sizer";
+import AutoSizer, { Size } from "react-virtualized-auto-sizer";
 import InfiniteLoader from "react-window-infinite-loader";
-import PlayerInstance from './types/PlayerInstance';
-import Player from './components/Player';
+import Player from './components/PlayerCell';
 
 
 const App: React.FC = () => {
 
-  const [items, setItems] = useState<PlayerInstance[]>([]);
-  
-  const loadMoreItems = () => {
-    
-  }
+  const [rowCount, setRowCount] = useState<number>(0);
+  const [columnCount, setColumnCount] = useState<number>(0);
 
   return (
     <div className="App">
       <AutoSizer>
-        {({ height, width }) =>
+        {({ height, width }: Size) =>
           <InfiniteLoader
-            isItemLoaded={() => true}
-            itemCount={items.length}
-            loadMoreItems={loadMoreItems}
+            isItemLoaded={() => false}
+            itemCount={columnCount * rowCount}
+            loadMoreItems={() => {}}
           >
             {({ onItemsRendered, ref }) => (
               <Grid
-                columnCount={Math.max(...items.map(instance => instance.x))}
-                rowCount={Math.max(...items.map(instance => instance.y))}
+                columnCount={columnCount}
+                rowCount={rowCount}
                 height={height}
                 width={width}
                 rowHeight={height / 3.5}
                 columnWidth={width / 3.5}
+                onItemsRendered={onItemsRendered}
+                ref={ref}
               >
                 {Player}
               </Grid>
